@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Tournaments - Auriga TT</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/dashboard">Auriga TT</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/tournament">Tournaments</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/tournament/players">Players</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/tournament/teams">Teams</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/profile">My Profile</a>
+                </li>
+                <li class="nav-item">
+                    <form th:action="@{/auth/logout}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-link nav-link">Sign Out</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-10">
+            <h1 class="text-center mb-4">Tournaments</h1>
+
+            <div class="mb-3">
+                <a th:href="@{/tournament/create}" class="btn btn-primary">Create New Tournament</a>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <form th:action="@{/tournament}" method="get" class="mb-3">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" name="name" th:value="${param.name}" placeholder="Tournament Name">
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-select" name="status">
+                                    <option value="">All Statuses</option>
+                                    <option value="UPCOMING" th:selected="${param.status == 'UPCOMING'}">Upcoming</option>
+                                    <option value="ONGOING" th:selected="${param.status == 'ONGOING'}">Ongoing</option>
+                                    <option value="COMPLETED" th:selected="${param.status == 'COMPLETED'}">Completed</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-select" name="type">
+                                    <option value="">All Types</option>
+                                    <option th:value="SINGLE_ELIMINATION" th:selected="${param.type == 'SINGLE_ELIMINATION'}">Single Elimination</option>
+                                    <option th:value="DOUBLE_ELIMINATION" th:selected="${param.type == 'DOUBLE_ELIMINATION'}">Double Elimination</option>
+                                    <option th:value="ROUND_ROBIN" th:selected="${param.type == 'ROUND_ROBIN'}">Round Robin</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="submit" class="btn btn-primary w-100">Search</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="tournament : ${tournaments}">
+                            <td th:text="${tournament.name}">Tournament Name</td>
+                            <td th:text="${#temporals.format(tournament.startDate, 'dd MMM yyyy')}">Start Date</td>
+                            <td th:text="${#temporals.format(tournament.endDate, 'dd MMM yyyy')}">End Date</td>
+                            <td th:text="${tournament.tournamentType}">Type</td>
+                            <td th:text="${tournament.status}">Status</td>
+                            <td>
+                                <a th:href="@{/tournament/{id}(id=${tournament.tournamentId})}" class="btn btn-sm btn-info">View</a>
+                                <a th:href="@{/tournament/{id}/edit(id=${tournament.tournamentId})}" class="btn btn-sm btn-primary">Edit</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <nav th:if="${tournaments.totalPages > 1}">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item" th:classappend="${tournaments.first} ? 'disabled' : ''">
+                                <a class="page-link" th:href="@{/tournament(page=${tournaments.number - 1}, size=${tournaments.size}, name=${param.name}, status=${param.status}, type=${param.type})}">&laquo;</a>
+                            </li>
+                            <li class="page-item" th:each="pageNumber : ${#numbers.sequence(0, tournaments.totalPages - 1)}" th:classappend="${pageNumber == tournaments.number} ? 'active' : ''">
+                                <a class="page-link" th:href="@{/tournament(page=${pageNumber}, size=${tournaments.size}, name=${param.name}, status=${param.status}, type=${param.type})}" th:text="${pageNumber + 1}"></a>
+                            </li>
+                            <li class="page-item" th:classappend="${tournaments.last} ? 'disabled' : ''">
+                                <a class="page-link" th:href="@{/tournament(page=${tournaments.number + 1}, size=${tournaments.size}, name=${param.name}, status=${param.status}, type=${param.type})}">&raquo;</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

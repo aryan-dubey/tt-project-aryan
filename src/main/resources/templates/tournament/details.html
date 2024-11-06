@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${tournament.name} + ' - Auriga TT'">Tournament Details - Auriga TT</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/dashboard">Auriga TT</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/tournament">Tournaments</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/tournament/players">Players</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/tournament/teams">Teams</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/profile">My Profile</a>
+                </li>
+                <li class="nav-item">
+                    <form th:action="@{/auth/logout}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-link nav-link">Sign Out</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h1 class="card-title text-center mb-4" th:text="${tournament.name}">Tournament Name</h1>
+
+                    <dl class="row">
+                        <!-- Rules replaces Description -->
+                        <dt class="col-sm-3">Rules:</dt>
+                        <dd class="col-sm-9" th:text="${tournament.rules}">Tournament rules</dd>
+
+                        <dt class="col-sm-3">Start Date:</dt>
+                        <dd class="col-sm-9" th:text="${#temporals.format(tournament.startDate, 'dd MMMM yyyy')}">Start date</dd>
+
+                        <dt class="col-sm-3">End Date:</dt>
+                        <dd class="col-sm-9" th:text="${#temporals.format(tournament.endDate, 'dd MMMM yyyy')}">End date</dd>
+
+                        <dt class="col-sm-3">Type:</dt>
+                        <dd class="col-sm-9" th:text="${tournament.tournamentType}">Tournament type</dd>
+
+                        <dt class="col-sm-3">Status:</dt>
+                        <dd class="col-sm-9" th:text="${tournament.status}">Tournament status</dd>
+
+                        <dt class="col-sm-3">Max Participants:</dt>
+                        <dd class="col-sm-9" th:text="${tournament.maxParticipants}">Maximum participants</dd>
+
+                        <dt class="col-sm-3">Created By:</dt>
+                        <dd class="col-sm-9" th:text="${tournament.createdBy.username}">Creator</dd>
+
+                        <dt class="col-sm-3">Created At:</dt>
+                        <dd class="col-sm-9" th:text="${#temporals.format(tournament.createdAt, 'dd MMM yyyy HH:mm')}">Creation date</dd>
+                    </dl>
+
+                    <!-- Fix URL paths to match controller -->
+                    <div class="d-flex justify-content-between mt-4">
+                        <a th:href="@{/tournament/{id}/edit(id=${tournament.tournamentId})}" class="btn btn-primary">Edit Tournament</a>
+                        <a th:href="@{/tournament/{id}/participants(id=${tournament.tournamentId})}" class="btn btn-info">View Participants</a>
+                        <a th:href="@{/tournament/{id}/teams(id=${tournament.tournamentId})}" class="btn btn-success">View Teams</a>
+                        <form th:action="@{/tournament/{id}/delete(id=${tournament.tournamentId})}" method="post"
+                              onsubmit="return confirm('Are you sure you want to delete this tournament?');">
+                            <button type="submit" class="btn btn-danger">Delete Tournament</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
